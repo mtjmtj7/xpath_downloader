@@ -186,3 +186,5 @@ public class Client extends JFrame {
 对于第一种情况，我可以直接在链接前面加http或者https；对于第二种情况是属于服务器上传图片，我们可以输入域名前缀。
 
 - 进度条提示。
+
+![](http://media.mtjmtj7.cn/images/2019-10-06_48da1c81-5620-49ba-9d60-8b376c31dc33.png)
