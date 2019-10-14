@@ -188,3 +188,8 @@ public class Client extends JFrame {
 - 进度条提示。
 
 ![](http://media.mtjmtj7.cn/images/2019-10-06_48da1c81-5620-49ba-9d60-8b376c31dc33.png)
+
+### 2019-10-14更新
+
+- 修复了完整链接无法下载的bug![](http://media.mtjmtj7.cn/images/e248.png)
+

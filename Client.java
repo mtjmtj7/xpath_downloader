@@ -176,7 +176,10 @@ public class Client extends JFrame {
 		
 		URL url = null;
         try {
-            url = new URL(header + ":" + link);
+        	String s = "";
+        	if(header == "" || header.equals("") || header == null) s=link;
+        	else s = header + ":" + link;
+            url = new URL(s);
             DataInputStream dataInputStream = new DataInputStream(url.openStream());
             File file = new File(path);
             if(!file.exists()){
