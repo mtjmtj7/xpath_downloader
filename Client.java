@@ -2,12 +2,14 @@ package xpath_img_downloader;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.Image;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
@@ -28,8 +30,10 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.border.TitledBorder;
 import javax.swing.JProgressBar;
+import java.awt.Toolkit;
 
 public class Client extends JFrame {
 
@@ -48,6 +52,11 @@ public class Client extends JFrame {
 	public JRadioButton radioButtonNull;
 	public JProgressBar progressBar;
 	int number = 0;
+	public JPanel panel_1;
+	public JLabel label;
+	public JLabel lb_success;
+	public JLabel lb_defeat;
+	public JLabel label_2;
 	/**
 	 * Launch the application.
 	 */
@@ -70,20 +79,20 @@ public class Client extends JFrame {
 	public Client() {
 		setTitle("xpath图片下载器_mtjmtj7");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 550, 450);
+		setBounds(100, 100, 550, 490);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+			
 		button = new JButton("选择文件夹");
 		button.addActionListener(new ButtonActionListener());
-		button.setBounds(10, 360, 243, 41);
+		button.setBounds(10, 400, 243, 41);
 		contentPane.add(button);
 		
 		button_1 = new JButton("下载");
 		button_1.addActionListener(new Button_1ActionListener());
-		button_1.setBounds(280, 360, 243, 41);
+		button_1.setBounds(280, 400, 243, 41);
 		contentPane.add(button_1);
 		
 		scrollPane = new JScrollPane();
@@ -127,8 +136,29 @@ public class Client extends JFrame {
 		textField.setColumns(10);
 		
 		progressBar = new JProgressBar();
-		progressBar.setBounds(10, 336, 513, 14);
+		progressBar.setBounds(10, 332, 513, 14);
 		contentPane.add(progressBar);
+		
+		panel_1 = new JPanel();
+		panel_1.setBounds(10, 353, 514, 37);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+		
+		label = new JLabel("下载成功");
+		label.setBounds(10, 0, 56, 37);
+		panel_1.add(label);
+		
+		lb_success = new JLabel("0");
+		lb_success.setBounds(67, 11, 54, 15);
+		panel_1.add(lb_success);
+		
+		lb_defeat = new JLabel("0");
+		lb_defeat.setBounds(203, 11, 54, 15);
+		panel_1.add(lb_defeat);
+		
+		label_2 = new JLabel("下载失败");
+		label_2.setBounds(146, 0, 56, 37);
+		panel_1.add(label_2);
 
 	}
 	//下载
@@ -172,7 +202,7 @@ public class Client extends JFrame {
 		}
 	}
 	//下载器
-	public void downloader (String header, String link, String path, String filename) {
+	public boolean downloader (String header, String link, String path, String filename) {
 		
 		URL url = null;
         try {
@@ -198,10 +228,9 @@ public class Client extends JFrame {
             fileOutputStream.write(output.toByteArray());
             dataInputStream.close();
             fileOutputStream.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
 	}
 	//下载线程
@@ -219,17 +248,44 @@ public class Client extends JFrame {
 		}
 		@Override
 		public void run() {
-			downloader(header, link, path, filename);
+			boolean val = downloader(header, link, path, filename);
+			//下载成功计数
+			if(val)  downSuccess();
+			else  downDefeat();
+			//进度条
 			setProValue();
 		}
 	}
+	//下载成功计数器
+	public synchronized void downSuccess(){
+		int curr=new Integer(lb_success.getText());
+		curr++;
+		lb_success.setText(String.valueOf(curr));
+	}
+	//下载失败计数器
+	public synchronized void downDefeat(){
+		int curr=new Integer(lb_defeat.getText());
+		curr++;
+		lb_defeat.setText(String.valueOf(curr));
+	}
 	//进度条
 	public synchronized void setProValue(){
-		int curr=progressBar.getValue();
-		curr++;
+		int curr = new Integer(lb_success.getText()) + new Integer(lb_defeat.getText());
 		progressBar.setValue(curr);
 		if(curr == progressBar.getMaximum()) {
 			JOptionPane.showMessageDialog(contentPane, "下载完成！");
+			//进度条清零
+			progressBar.setValue(0);
+			//清空链接面板
+			textArea.setText("");
+			//自动打开文件夹
+			Runtime runtime = Runtime.getRuntime();
+			try {
+				runtime.exec("rundll32 url.dll FileProtocolHandler "+ filepath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

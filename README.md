@@ -193,3 +193,10 @@ public class Client extends JFrame {
 
 - 修复了完整链接无法下载的bug![](http://media.mtjmtj7.cn/images/e248.png)
 
+### 2019-11-08更新
+
+- 新增了下载完成自动打开文件夹
+- 修复了下载逻辑    <font size=2>(下载失败时不会提示100%</font>
+- 新增了下载计数
+
+![](http://media.mtjmtj7.cn/images/2019-11-08_6cb5bf7a-c5e8-4c44-be2d-ae1901dfe0a5.jpg)
